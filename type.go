@@ -1,6 +1,9 @@
 package flightserv
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"time"
+)
 
 type AircraftType struct {
 	UUID        uuid.UUID `json:"uuid"`
@@ -26,7 +29,29 @@ func (xa *AircraftTypes) EqualTo(aircraftTypes AircraftTypes) bool {
 }
 
 type FlightLog struct {
-	UUID             uuid.UUID `json:"uuid"`
-	AircraftTypeUUID uuid.UUID `json:"aircraftTypeUuid"`
-	AircraftType     string    `json:"aircraftType"`
+	UUID              uuid.UUID `json:"uuid"`
+	UserUUID          uuid.UUID `json:"userUuid"`
+	AircraftTypeUUID  uuid.UUID `json:"aircraftTypeUuid"`
+	AircraftType      string    `json:"aircraftType"`
+	Date              time.Time `json:"date"`
+	Registration      string    `json:"registration"`
+	PilotInCommand    string    `json:"pilotInCommand"`
+	Details           string    `json:"details"`
+	InstrumentNavAids string    `json:"instrumentNavAids"`
+	InstrumentPlace   string    `json:"instrumentPlace"`
+	InstrumentActual  string    `json:"instrumentActual"`
+	InstrumentFSTD    float64   `json:"instrumentFSTD"`
+	InstructorSE      float64   `json:"instructorSE"`
+	InstructorME      float64   `json:"instructorME"`
+	InstructorFSTD    float64   `json:"instructorFSTD"`
+	FSTD              float64   `json:"fstd"`
+	EngineType        string    `json:"engineType"`
+	DayType           string    `json:"dayType"`
+	Dual              float64   `json:"dual"`
+	PIC               float64   `json:"pic"`
+	PICUS             float64   `json:"picus"`
+	Copilot           float64   `json:"copilot"`
+	DayLandings       int       `json:"dayLandings"`
+	NightLandings     int       `json:"nightLandings"`
+	Remarks           string    `json:"remarks"`
 }
