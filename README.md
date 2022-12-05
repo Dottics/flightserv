@@ -1,3 +1,5 @@
 # Flight Service Microservice Package
+> by dottics PTY (LTD)
 
-Microservice package for a Go application to integrate with the Dottics Flight Service.
+`flightserv` is a microservice package (msp) for a Go application to integrate
+with the Dottics Flight Service.
