@@ -55,3 +55,20 @@ type FlightLog struct {
 	NightLandings     int       `json:"nightLandings"`
 	Remarks           string    `json:"remarks"`
 }
+
+type FlightLogs []FlightLog
+
+// EqualTo returns a boolean whether a slice of flight logs are equal.
+// Equal in length and equal in order of the flight logs in the slice.
+func (xf *FlightLogs) EqualTo(flightLogs FlightLogs) bool {
+	if len(*xf) != len(flightLogs) {
+		return false
+	}
+	for i, v := range *xf {
+		flightLog := flightLogs[i]
+		if flightLog != v {
+			return false
+		}
+	}
+	return true
+}

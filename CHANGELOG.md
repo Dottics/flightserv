@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - The `AircraftType` type.
 - The `GetAircraftTypes` method to get all the available aircraft types.
 - The `FlightLog` type.
+- Added the service method `GetFlightLogs` which fetches all the flight logs for
+a user.
 
 ## [0.0.0] - 2022-12-03
 ### Added
