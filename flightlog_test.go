@@ -1,7 +1,6 @@
 package flightserv
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/dottics/dutil"
 	"github.com/google/uuid"
@@ -9,11 +8,6 @@ import (
 	"testing"
 	"time"
 )
-
-func prettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
-}
 
 func buildFlightLog() FlightLog {
 	return FlightLog{
