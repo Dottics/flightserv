@@ -449,6 +449,9 @@ func TestService_DeleteFlightLog(t *testing.T) {
 			if !dutil.ErrorEqual(tc.e, e) {
 				t.Errorf("expected error %v got %v", tc.e, e)
 			}
+			if tc.exchange.Request.Method != "DELETE" {
+				t.Errorf("expected request method DELETE got %s", tc.exchange.Request.Method)
+			}
 			// test requests
 			testQueryParams := fmt.Sprintf("UUID=%s&userUUID=%s", testUUID.String(), testUserUUID.String())
 			reqQueryParams := tc.exchange.Request.URL.RawQuery
