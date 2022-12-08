@@ -118,7 +118,7 @@ func (s *Service) CreateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
 	return res.Data.FlightLog, nil
 }
 
-// UpdateFlightLog updates a new FlightLog entry.
+// UpdateFlightLog updates a specific FlightLog entry.
 func (s *Service) UpdateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
 	// set path
 	s.serv.URL.Path = "/log/-"
@@ -146,7 +146,7 @@ func (s *Service) UpdateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
 		return FlightLog{}, e
 	}
 
-	if r.StatusCode != 201 {
+	if r.StatusCode != 200 {
 		e := &dutil.Err{
 			Status: r.StatusCode,
 			Errors: res.Errors,

@@ -341,12 +341,12 @@ func TestService_UpdateFlightLog(t *testing.T) {
 			},
 		},
 		{
-			name: "201 created",
+			name: "200 updated",
 			exchange: &microtest.Exchange{
 				Response: microtest.Response{
-					Status: 201,
+					Status: 200,
 					Body: `{
-						"message": "flight log created",
+						"message": "flight log updated",
 						"data": {
 							"flightLog": {
 								"uuid": "b9782d74-dd43-484a-8fb0-f9eee8e8bcbb",
