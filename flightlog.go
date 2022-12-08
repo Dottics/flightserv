@@ -117,3 +117,42 @@ func (s *Service) CreateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
 
 	return res.Data.FlightLog, nil
 }
+
+// UpdateFlightLog updates a new FlightLog entry.
+func (s *Service) UpdateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
+	// set path
+	s.serv.URL.Path = "/log/-"
+	// parse body
+	p, e := dutil.MarshalReader(log)
+	if e != nil {
+		return FlightLog{}, e
+	}
+	// do request
+	r, e := s.serv.NewRequest("PUT", s.serv.URL.String(), nil, p)
+	if e != nil {
+		return FlightLog{}, e
+	}
+	// response structure
+	type Data struct {
+		FlightLog `json:"flightLog"`
+	}
+	res := struct {
+		Data         `json:"data"`
+		dutil.Errors `json:"errors"`
+	}{}
+	// decode response
+	_, e = s.serv.Decode(r, &res)
+	if e != nil {
+		return FlightLog{}, e
+	}
+
+	if r.StatusCode != 201 {
+		e := &dutil.Err{
+			Status: r.StatusCode,
+			Errors: res.Errors,
+		}
+		return FlightLog{}, e
+	}
+
+	return res.Data.FlightLog, nil
+}
