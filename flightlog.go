@@ -156,3 +156,38 @@ func (s *Service) UpdateFlightLog(log FlightLog) (FlightLog, dutil.Error) {
 
 	return res.Data.FlightLog, nil
 }
+
+// DeleteFlightLog deletes a specific flight log for a user from the
+// microservice and only returns an error if the is one. If nil is returned
+// then the FlightLog was deleted successfully.
+func (s *Service) DeleteFlightLog(userUUID, UUID uuid.UUID) dutil.Error {
+	// set path
+	s.serv.URL.Path = "/log/-"
+	// set query params
+	qs := url.Values{"userUUID": {userUUID.String()}, "UUID": {UUID.String()}}
+	s.serv.URL.RawQuery = qs.Encode()
+	// do request
+	r, e := s.serv.NewRequest("DELETE", s.serv.URL.String(), nil, nil)
+	if e != nil {
+		return e
+	}
+
+	res := struct {
+		Message string       `json:"message"`
+		Errors  dutil.Errors `json:"errors"`
+	}{}
+	// decode the response
+	_, e = s.serv.Decode(r, &res)
+	if e != nil {
+		return e
+	}
+
+	if r.StatusCode != 200 {
+		e := &dutil.Err{
+			Status: r.StatusCode,
+			Errors: res.Errors,
+		}
+		return e
+	}
+	return nil
+}

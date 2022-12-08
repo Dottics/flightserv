@@ -392,3 +392,69 @@ func TestService_UpdateFlightLog(t *testing.T) {
 		})
 	}
 }
+
+func TestService_DeleteFlightLog(t *testing.T) {
+	tt := []struct {
+		name     string
+		exchange *microtest.Exchange
+		e        dutil.Error
+	}{
+		{
+			name: "401 Forbidden",
+			exchange: &microtest.Exchange{
+				Response: microtest.Response{
+					Status: 401,
+					Body: `{
+						"message": "Forbidden",
+						"errors": {
+							"permission": ["Please ensure you have permission"]
+						}
+					}`,
+				},
+			},
+			e: &dutil.Err{
+				Status: 401,
+				Errors: map[string][]string{
+					"permission": {"Please ensure you have permission"},
+				},
+			},
+		},
+		{
+			name: "200 success",
+			exchange: &microtest.Exchange{
+				Response: microtest.Response{
+					Status: 200,
+					Body: `{
+						"message": "flight log deleted"
+					}`,
+				},
+			},
+			e: nil,
+		},
+	}
+
+	s := NewService("")
+	ms := microtest.MockServer(s.serv)
+
+	testUserUUID := uuid.MustParse("71b2717c-f6aa-43f0-baf1-0fec660cfa16")
+	testUUID := uuid.MustParse("905bae9d-3348-4f31-bdaf-ee7059050f63")
+
+	for i, tc := range tt {
+		name := fmt.Sprintf("%d %s", i, tc.name)
+		t.Run(name, func(t *testing.T) {
+			ms.Append(tc.exchange)
+
+			e := s.DeleteFlightLog(testUserUUID, testUUID)
+			// test error
+			if !dutil.ErrorEqual(tc.e, e) {
+				t.Errorf("expected error %v got %v", tc.e, e)
+			}
+			// test requests
+			testQueryParams := fmt.Sprintf("UUID=%s&userUUID=%s", testUUID.String(), testUserUUID.String())
+			reqQueryParams := tc.exchange.Request.URL.RawQuery
+			if reqQueryParams != testQueryParams {
+				t.Errorf("expected query params %v got %v", testQueryParams, reqQueryParams)
+			}
+		})
+	}
+}
