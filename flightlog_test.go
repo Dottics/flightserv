@@ -1,6 +1,7 @@
 package flightserv
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/dottics/dutil"
 	"github.com/google/uuid"
@@ -8,6 +9,11 @@ import (
 	"testing"
 	"time"
 )
+
+func prettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
+}
 
 func buildFlightLog() FlightLog {
 	return FlightLog{
@@ -225,6 +231,84 @@ func TestService_GetFlightLog(t *testing.T) {
 			// test flight log
 			if f != tc.flightLog {
 				t.Errorf("expected flight log %v got %v", tc.flightLog, f)
+			}
+		})
+	}
+}
+
+func TestService_CreateFlightLog(t *testing.T) {
+	tt := []struct {
+		name     string
+		exchange *microtest.Exchange
+		log      FlightLog
+		e        dutil.Error
+	}{
+		{
+			name: "401 Forbidden",
+			exchange: &microtest.Exchange{
+				Response: microtest.Response{
+					Status: 401,
+					Body: `{
+						"message": "Forbidden",
+						"data": {},
+						"errors": {
+							"permission": ["Please ensure you have permission"]
+						}
+					}`,
+				},
+			},
+			log: FlightLog{},
+			e: &dutil.Err{
+				Status: 401,
+				Errors: map[string][]string{
+					"permission": {"Please ensure you have permission"},
+				},
+			},
+		},
+		{
+			name: "201 created",
+			exchange: &microtest.Exchange{
+				Response: microtest.Response{
+					Status: 201,
+					Body: `{
+						"message": "flight log created",
+						"data": {
+							"flightLog": {
+								"uuid": "b9782d74-dd43-484a-8fb0-f9eee8e8bcbb",
+								"userUuid": "910b1072-b999-4a6e-b592-ef110ac5b0eb",
+								"aircraftType": "A320",
+								"date": "2022-04-20T15:35:00.000Z",
+								"pilotInCommand": "SELF",
+								"details": "HKG-CPT",
+								"instrumentFSTD": 1,
+								"fstd": 2,
+								"pic": 1.2,
+								"copilot": 3.3,
+								"dayLandings": 1
+							}
+						}
+					}`,
+				},
+			},
+			log: buildFlightLog(),
+			e:   nil,
+		},
+	}
+
+	s := NewService("")
+	ms := microtest.MockServer(s.serv)
+
+	for i, tc := range tt {
+		name := fmt.Sprintf("%d %s", i, tc.name)
+		t.Run(name, func(t *testing.T) {
+			ms.Append(tc.exchange)
+
+			log, e := s.CreateFlightLog(tc.log)
+			if !dutil.ErrorEqual(tc.e, e) {
+				t.Errorf("expected error %v got %v", tc.e, e)
+			}
+			if log != tc.log {
+				t.Errorf("expected flight log %v got %v", tc.log, log)
 			}
 		})
 	}
