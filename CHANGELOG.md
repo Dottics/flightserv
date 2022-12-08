@@ -5,6 +5,11 @@ The format is based on [Keep a changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [0.3.0] - 2022-12-08
+### Added
+- The service method `CreateFlightLog` which creates a new flight log in the
+microservice and returns the new flight log.
+
 ## [0.2.0] - 2022-12-06
 ### Added
 - Added the service method `GetFlightLog` which fetches a specific flight log
