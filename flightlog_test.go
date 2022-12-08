@@ -217,6 +217,11 @@ func TestService_GetFlightLog(t *testing.T) {
 				t.Errorf("expected error %v got %v", tc.e, e)
 			}
 			// test requests
+			testQueryParams := fmt.Sprintf("UUID=%s&userUUID=%s", testUUID.String(), testUserUUID.String())
+			reqQueryParams := tc.exchange.Request.URL.RawQuery
+			if reqQueryParams != testQueryParams {
+				t.Errorf("expected query params %v got %v", testQueryParams, reqQueryParams)
+			}
 			// test flight log
 			if f != tc.flightLog {
 				t.Errorf("expected flight log %v got %v", tc.flightLog, f)
